@@ -18,8 +18,10 @@ def main():
 
     crosstable = make_crosstable(generation)
     full_table = make_full_table(generation, crosstable)
-    # pretty_print(full_table)
-    print_to_csv(full_table)
+    pretty_print(full_table)
+
+    if len(sys.argv) == 3:
+        print_to_csv(full_table, sys.argv[2])
 
 
 def make_crosstable(generation: tuple):
@@ -66,15 +68,33 @@ def female(specimen):
     return specimen + "in"
 
 
-def print_to_csv(full_table):
-    if len(sys.argv) == 3:
-        filename = sys.argv[2]
-    else:
-        filename = "liger.csv"
+def pretty_print(table):
+    col_sizes = []
+    padding = 3
+    for i in range(len(table[0])):
+        col_sizes.append(
+            padding + max([len(entry) for entry in [table[col][i] for col in range(len(table))]]))  # bleugh
 
-    with open(filename, 'w', newline='') as csv_file:
+    lines = []
+    for row in table:
+        formatted_row = []
+        for entry, col_size in zip(row, col_sizes):
+            formatted_row.append('{:<{width}}'.format(entry, width=col_size))
+        formatted_row[1:1] = ['|  ']
+        lines.append(''.join(formatted_row))
+
+    lines[1:1] = ['{:_<{width}}'.format('', width=sum(col_sizes))]
+
+    for line in lines:
+        print(line)
+
+
+def print_to_csv(table, filename):
+    with open(filename, 'w', newline='', encoding='utf8') as csv_file:
         writer = csv.writer(csv_file)
-        writer.writerows(full_table)
+        writer.writerows(table)
+
+    print(f"Gespeichert in {filename}.")
 
 
 if __name__ == '__main__':
