@@ -17,8 +17,6 @@ def main():
         generation += tuple(new_generation)
 
     crosstable = make_crosstable(generation)
-    print(len(generation))
-    print(len(crosstable.keys()))
     full_table = make_full_table(generation, crosstable)
     # pretty_print(full_table)
     print_to_csv(full_table)
